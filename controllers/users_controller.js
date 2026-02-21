@@ -6,6 +6,7 @@ import { httpStatusText } from "../utils/httpStatusText.js";
 import bcrypt from 'bcryptjs';
 import dotenv from "dotenv";
 import fs from 'fs';
+import usersRoles from "../utils/usersRoles.js";
 
 dotenv.config();
 
@@ -30,6 +31,42 @@ const getUserById = asyncWrapper(
       return next(error);
     }
     return res.json({status: httpStatusText.SUCCESS, data: {user}});
+  }
+);
+
+const getUsers = asyncWrapper(
+  async (req, res, next) => {
+    const users = await User.find({role: usersRoles.USER}, {__v: 0, password: 0});
+    if(!users) {
+      const error = new AppError();
+      error.create('users not found', 404, httpStatusText.FAIL);
+      return next(error);
+    }
+    return res.json({status: httpStatusText.SUCCESS, data: {users}});
+  }
+);
+
+const getAdmins = asyncWrapper(
+  async (req, res, next) => {
+    const admins = await User.find({role: usersRoles.ADMIN}, {__v: 0, password: 0});
+    if(!admins) {
+      const error = new AppError();
+      error.create('admins not found', 404, httpStatusText.FAIL);
+      return next(error);
+    }
+    return res.json({status: httpStatusText.SUCCESS, data: {admins}});
+  }
+);
+
+const getManagers = asyncWrapper(
+  async (req, res, next) => {
+    const managers = await User.find({role: usersRoles.MANAGER}, {__v: 0, password: 0});
+    if(!managers) {
+      const error = new AppError();
+      error.create('managers not found', 404, httpStatusText.FAIL);
+      return next(error);
+    }
+    return res.json({status: httpStatusText.SUCCESS, data: {managers}});
   }
 );
 
@@ -106,4 +143,4 @@ const deleteUser = asyncWrapper(
 
 
 
-export {getAllUsers, register, login, deleteUser, getUserById};
+export {getAllUsers, register, login, deleteUser, getUserById, getUsers, getAdmins, getManagers};

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, login, register, deleteUser, getUserById } from '../controllers/users_controller.js';
+import { getAllUsers, login, register, deleteUser, getUserById, getUsers, getAdmins, getManagers } from '../controllers/users_controller.js';
 import verifyToken from '../middleware/verifyToken.js';
 import multer from 'multer';
 import AppError from '../utils/appError.js';
@@ -41,6 +41,15 @@ router.route('/register')
 
 router.route('/login')
   .post(login);
+
+router.route('/users')
+  .get(verifyToken, allowedTo(usersRoles.ADMIN, usersRoles.MANAGER), getUsers);
+
+router.route('/admins')
+  .get(verifyToken, allowedTo(usersRoles.MANAGER), getAdmins);
+
+router.route('/managers')
+  .get(verifyToken, allowedTo(usersRoles.MANAGER), getManagers);
 
 router.route('/:userId')
   .get(verifyToken, allowedTo(usersRoles.MANAGER), getUserById)
