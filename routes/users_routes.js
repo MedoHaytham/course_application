@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, login, register, deleteUser } from '../controllers/users_controller.js';
+import { getAllUsers, login, register, deleteUser, getUserById } from '../controllers/users_controller.js';
 import verifyToken from '../middleware/verifyToken.js';
 import multer from 'multer';
 import AppError from '../utils/appError.js';
@@ -37,12 +37,13 @@ router.route('/')
   .get(verifyToken, allowedTo(usersRoles.MANAGER), getAllUsers);
 
 router.route('/register')
-  .post(verifyToken, allowedTo(usersRoles.MANAGER), upload.single('avatar'), register);
+  .post(upload.single('avatar'), register);
 
 router.route('/login')
   .post(login);
 
 router.route('/:userId')
+  .get(verifyToken, allowedTo(usersRoles.MANAGER), getUserById)
   .delete(verifyToken, allowedTo(usersRoles.MANAGER), deleteUser);
 
 export default router;

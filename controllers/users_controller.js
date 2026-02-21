@@ -20,6 +20,19 @@ const getAllUsers = asyncWrapper(
   }
 );
 
+const getUserById = asyncWrapper(
+  async (req, res, next) => {
+    const userId = req.params.userId;
+    const user = await User.findById(userId, {__v: 0, password: 0});
+    if(!user) {
+      const error = new AppError();
+      error.create('user not found', 404, httpStatusText.FAIL);
+      return next(error);
+    }
+    return res.json({status: httpStatusText.SUCCESS, data: {user}});
+  }
+);
+
 const register = asyncWrapper(
   async (req, res, next) => {
     const { firstName, lastName, email, password, role } = req.body;
@@ -93,4 +106,4 @@ const deleteUser = asyncWrapper(
 
 
 
-export {getAllUsers, register, login, deleteUser};
+export {getAllUsers, register, login, deleteUser, getUserById};
