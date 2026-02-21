@@ -4,6 +4,7 @@ import verifyToken from '../middleware/verifyToken.js';
 import multer from 'multer';
 import AppError from '../utils/appError.js';
 import { httpStatusText } from '../utils/httpStatusText.js';
+import allowedTo from '../middleware/allowedTo.js';
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -32,15 +33,15 @@ const upload = multer({storage, fileFilter});
 const router = express.Router();
 
 router.route('/')
-  .get(verifyToken, getAllUsers);
+  .get(verifyToken, allowedTo(usersRoles.MANAGER), getAllUsers);
 
 router.route('/register')
-  .post(upload.single('avatar'), register);
+  .post(verifyToken, allowedTo(usersRoles.MANAGER), upload.single('avatar'), register);
 
 router.route('/login')
   .post(login);
 
 router.route('/:userId')
-  .delete(deleteUser);
+  .delete(verifyToken, allowedTo(usersRoles.MANAGER), deleteUser);
 
 export default router;

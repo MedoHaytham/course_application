@@ -8,11 +8,11 @@ const router = express.Router();
 
 router.route('/')
   .get(getAllCourses)
-  .post(verifyToken, allowedTo(usersRoles.MANAGER),addCourse);
+  .post(verifyToken, allowedTo(usersRoles.ADMIN, usersRoles.MANAGER),addCourse);
 
 router.route('/:courseId')
   .get(getCourseById)
-  .patch(upadateCourse)
+  .patch(verifyToken, allowedTo(usersRoles.ADMIN, usersRoles.MANAGER) ,upadateCourse)
   .delete(verifyToken, allowedTo(usersRoles.ADMIN, usersRoles.MANAGER), deleteCourse);
 
 export default router;
