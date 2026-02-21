@@ -5,6 +5,7 @@ import multer from 'multer';
 import AppError from '../utils/appError.js';
 import { httpStatusText } from '../utils/httpStatusText.js';
 import allowedTo from '../middleware/allowedTo.js';
+import usersRoles from '../utils/usersRoles.js';
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
